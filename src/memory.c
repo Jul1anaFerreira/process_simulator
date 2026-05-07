@@ -158,3 +158,72 @@ void execute_L_instruction(PCB *process,
            process->pid,
            filename);
 }
+
+
+void read_plan_file(const char *filename)
+{
+    FILE *fp = fopen(filename, "r");
+
+    if(fp == NULL)
+    {
+        printf("Error opening %s\n",
+               filename);
+
+        return;
+    }
+
+    while(fscanf(fp,
+                 "%s %d",
+                 planned[planned_count].filename,
+                 &planned[planned_count].arrival_time) == 2)
+    {
+        planned_count++;
+    }
+
+    fclose(fp);
+
+    printf("Plan loaded with %d programs\n",
+           planned_count);
+}
+
+void create_arrived_processes()
+{
+    for(int i = 0; i < planned_count; i++)
+    {
+        if(planned[i].arrival_time == global_time)
+        {
+            int start =
+                load_program(planned[i].filename);
+
+            if(start == -1)
+            {
+                continue;
+            }
+
+            PCB p = {
+
+                .pid = next_pid++,
+
+                .ppid = 0,
+
+                .pc = start,
+
+                .start = start,
+
+                .program_size = 3,
+
+                .variable = 0,
+
+                .state = READY
+            };
+
+            pcb_table[process_count] = p;
+
+            process_count++;
+
+            printf("Created PID %d from %s\n",
+                   p.pid,
+                   planned[i].filename);
+        }
+    }
+}

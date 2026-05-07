@@ -22,4 +22,8 @@ extern int process_count;
 
 extern int next_pid;
 
+extern PlannedProgram planned[50];
+
+extern int planned_count;
+
 #endif

@@ -21,4 +21,8 @@ void print_memory();
 void execute_L_instruction(PCB *process,
                            const char *filename);
 
+void read_plan_file(const char *filename);
+
+void create_arrived_processes();
+
 #endif

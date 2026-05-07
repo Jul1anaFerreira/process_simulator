@@ -17,49 +17,62 @@ int global_time = 0;
 
 int TIME_QUANTUM = 3;
 
-int process_count = 1;
+int process_count = 0;
 
 int next_pid = 2;
+
+PlannedProgram planned[50];
+
+int planned_count = 0;
 
 int main()
 {
     init_queue(&blocked_queue);
 
-    int start = load_program("programs/p1.prg");
+    read_plan_file("data/plan.txt");
 
-    PCB p1 = {
-        .pid = 1,
-        .ppid = 0,
-        .pc = start,
-        .start = start,
-        .program_size = 3,
-        .variable = 0,
-        .state = READY
-    };
-
-    pcb_table[0] = p1;
-
-    execute_process(&pcb_table[0],
-                    TIME_QUANTUM);
-
-    printf("\nVariable = %d\n",
-           pcb_table[0].variable);
-
-    printf("CPU Time = %d\n",
-           pcb_table[0].cpu_time_used);
-
-    printf("Global Time = %d\n",
+    while(1)
+{
+    printf("\n===== TIME %d =====\n",
            global_time);
 
-    printf("\nTotal Processes: %d\n",
-           process_count);
+    create_arrived_processes();
 
     for(int i = 0; i < process_count; i++)
     {
-        printf("PID=%d PPID=%d PC=%d\n",
+        if(pcb_table[i].state != TERMINATED)
+        {
+            execute_process(&pcb_table[i],
+                            TIME_QUANTUM);
+        }
+    }
+
+    int active = 0;
+
+    for(int i = 0; i < process_count; i++)
+    {
+        if(pcb_table[i].state != TERMINATED)
+        {
+            active = 1;
+            break;
+        }
+    }
+
+    if(active == 0)
+    {
+        break;
+    }
+}
+
+    printf("\nFinal Process Table:\n");
+
+    for(int i = 0; i < process_count; i++)
+    {
+        printf("PID=%d PPID=%d STATE=%d VAR=%d\n",
                pcb_table[i].pid,
                pcb_table[i].ppid,
-               pcb_table[i].pc);
+               pcb_table[i].state,
+               pcb_table[i].variable);
     }
 
     return 0;

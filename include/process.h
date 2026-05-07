@@ -45,4 +45,12 @@ void execute_process(PCB *p, int quantum);
 void context_switch(PCB *old_p, PCB *new_p);
 void unblock_process();
 
+typedef struct {
+
+    char filename[50];
+
+    int arrival_time;
+
+} PlannedProgram;
+
 #endif
