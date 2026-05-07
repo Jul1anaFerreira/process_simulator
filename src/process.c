@@ -4,6 +4,7 @@
 #include "../include/process.h"
 #include "../include/globals.h"
 #include "../include/scheduler.h"
+#include "../include/memory.h"
 
 void execute_instruction(PCB *p, Instruction instr)
 {
@@ -27,9 +28,22 @@ void execute_instruction(PCB *p, Instruction instr)
             break;
 
         case 'T':
-            p->state = TERMINATED;
-            p->end_time = global_time;
+           p->state = TERMINATED;
+           p->end_time = global_time;
+           free_program_memory(p->start,
+                               p->program_size);
+                               
+           break;
+
+        case 'C':
+           execute_C_instruction(p,
+                          instr.n);
             break;
+
+        case 'L':
+           execute_L_instruction(p,
+                          instr.nome);
+            return;
 
         default:
             printf("Unknown instruction: %c\n", instr.ins);
@@ -52,6 +66,11 @@ void execute_process(PCB *p, int quantum)
                instr.n);
 
         execute_instruction(p, instr);
+
+        if(instr.ins == 'L')
+        {
+            continue;
+        }
 
         p->cpu_time_used++;
 

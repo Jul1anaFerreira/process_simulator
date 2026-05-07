@@ -13,7 +13,7 @@ typedef enum {
 typedef struct {
     char ins;
     int n;
-    char nome[15];
+    char nome[50];
 } Instruction;
 
 typedef struct {
@@ -36,7 +36,7 @@ typedef struct {
     int start_time;
     int end_time;
 
-    char program_name[20];
+    char program_name[50];
 
 } PCB;
 

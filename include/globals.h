@@ -16,4 +16,10 @@ extern int TIME_QUANTUM;
 
 extern Queue blocked_queue;
 
+extern int memory_used[MEMORY_SIZE];
+
+extern int process_count;
+
+extern int next_pid;
+
 #endif
