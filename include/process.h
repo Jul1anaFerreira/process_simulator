@@ -51,6 +51,8 @@ typedef struct {
 
     int arrival_time;
 
+    int loaded;
+
 } PlannedProgram;
 
 #endif

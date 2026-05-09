@@ -93,6 +93,14 @@ void execute_process(PCB *p, int quantum)
     {
         enqueue(&blocked_queue, p->pid);
     }
+
+  printf("PID=%d | VAR=%d | STATE=%d | CPU=%d\n",
+       p->pid,
+       p->variable,
+       p->state,
+       p->cpu_time_used);
+
+
 }
 
 void context_switch(PCB *old_p, PCB *new_p)
@@ -131,3 +139,4 @@ void unblock_process()
         }
     }
 }
+

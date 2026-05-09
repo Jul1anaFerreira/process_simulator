@@ -190,7 +190,8 @@ void create_arrived_processes()
 {
     for(int i = 0; i < planned_count; i++)
     {
-        if(planned[i].arrival_time == global_time)
+        if(planned[i].arrival_time == global_time &&
+           planned[i].loaded == 0)
         {
             int start =
                 load_program(planned[i].filename);
@@ -210,16 +211,26 @@ void create_arrived_processes()
 
                 .start = start,
 
-                .program_size = 3,
+                .program_size = 20,
 
                 .variable = 0,
 
-                .state = READY
+                .priority = 1,
+
+                .state = READY,
+
+                .cpu_time_used = 0,
+
+                .start_time = global_time,
+
+                .end_time = 9999
             };
 
             pcb_table[process_count] = p;
 
             process_count++;
+
+            planned[i].loaded = 1;
 
             printf("Created PID %d from %s\n",
                    p.pid,
@@ -227,3 +238,5 @@ void create_arrived_processes()
         }
     }
 }
+
+

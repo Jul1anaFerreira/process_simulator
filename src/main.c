@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "../include/process.h"
 #include "../include/globals.h"
@@ -19,7 +20,7 @@ int TIME_QUANTUM = 3;
 
 int process_count = 0;
 
-int next_pid = 2;
+int next_pid = 1;
 
 PlannedProgram planned[50];
 
@@ -31,48 +32,87 @@ int main()
 
     read_plan_file("data/plan.txt");
 
+    char command;
+
     while(1)
-{
-    printf("\n===== TIME %d =====\n",
-           global_time);
-
-    create_arrived_processes();
-
-    for(int i = 0; i < process_count; i++)
     {
-        if(pcb_table[i].state != TERMINATED)
+        printf("==============================");
+        printf("TIME = %d", global_time);
+        printf("============================== 	\n");
+
+        create_arrived_processes();
+
+        printf("Commands: \n");
+        printf("E -> Execute \n");
+        printf("I -> Interrup \n");
+        printf("D -> Long Term Scheduler \n");
+        printf("R -> Report \n");
+        printf("T -> Terminate Simulator \n");
+		printf("Command: ");
+        scanf(" %c", &command);
+
+        if(command == 'E')
         {
-            execute_process(&pcb_table[i],
-                            TIME_QUANTUM);
+            PCB *p = fcfs_scheduler();
+
+            if(p != NULL)
+            {
+                execute_process(p, TIME_QUANTUM);
+            }
+            else
+            {
+                printf("No READY processes");
+            }
         }
-    }
 
-    int active = 0;
-
-    for(int i = 0; i < process_count; i++)
-    {
-        if(pcb_table[i].state != TERMINATED)
+        else if(command == 'I')
         {
-            active = 1;
+            PCB *running = NULL;
+
+            for(int i = 0; i < process_count; i++)
+            {
+                if(pcb_table[i].state == RUNNING)
+                {
+                    running = &pcb_table[i];
+                    break;
+                }
+            }
+
+            interrupt_running_process(running);
+        }
+
+        else if(command == 'D')
+        {
+            long_term_scheduler();
+        }
+
+        else if(command == 'R')
+        {
+            print_report();
+        }
+
+        else if(command == 'T')
+        {
+            print_final_statistics();
             break;
         }
-    }
 
-    if(active == 0)
-    {
-        break;
-    }
-}
+        int active = 0;
 
-    printf("\nFinal Process Table:\n");
+        for(int i = 0; i < process_count; i++)
+        {
+            if(pcb_table[i].state != TERMINATED)
+            {
+                active = 1;
+                break;
+            }
+        }
 
-    for(int i = 0; i < process_count; i++)
-    {
-        printf("PID=%d PPID=%d STATE=%d VAR=%d\n",
-               pcb_table[i].pid,
-               pcb_table[i].ppid,
-               pcb_table[i].state,
-               pcb_table[i].variable);
+        if(active == 0 && process_count > 0)
+        {
+            print_final_statistics();
+            break;
+        }
     }
 
     return 0;

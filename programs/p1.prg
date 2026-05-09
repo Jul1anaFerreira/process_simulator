@@ -1,3 +1,5 @@
 M 100
-L programs/filho1.prg
+A  50
+S 25
 T
+
